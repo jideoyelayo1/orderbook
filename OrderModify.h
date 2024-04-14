@@ -1,33 +1,31 @@
 #pragma once
 
-#include <numeric>
-#include "OrderType.h"
-#include "Side.h"
+#include "Order.h"
 
-// Alias types
-using Price = std::int32_t;
-using Quantity = std::uint32_t;
-using OrderId = std::uint64_t;
-
-
-class OrderModify {
+class OrderModify
+{
 private:
-    OrderId _id;
-    Side _side;
+    OrderId _orderId;
     Price _price;
-    Quantity _qty;
+    Side _side;
+    Quantity _quantity;
 public:
-    OrderModify(OrderId id, Side side, Price price, Quantity qty)
-        : _id{ id }, _side{ side }, _price{ price }, _qty{ qty }
-    {};
+    OrderModify(OrderId orderId, Side side, Price price, Quantity quantity)
+        : _orderId{ orderId }
+        , _price{ price }
+        , _side{ side }
+        , _quantity{ quantity }
+    { }
 
+    OrderId getOrderId() const { return _orderId; }
+    Price getPrice() const { return _price; }
+    Side getSide() const { return _side; }
+    Quantity getQuantity() const { return _quantity; }
 
-    OrderId getOrderId() const;
-    Side getSide() const;
-    Price getPrice() const;
-    Quantity getQty() const;
+    OrderPtr toOrderPtr(OrderType type) const
+    {
+        return std::make_shared<Order>(type, getOrderId(), getSide(), getPrice(), getQuantity());
+    }
 
-    OrderPtr toOrderPtr(OrderType type) const;
 
 };
-
