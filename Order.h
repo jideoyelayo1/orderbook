@@ -47,4 +47,3 @@ public:
 using OrderPtr = std::shared_ptr<Order>;
 using OrderPtrs = std::list<OrderPtr>; // a vector is better and show upgrade with vector done
 
-using OrderIds = std::vector<OrderId>;
