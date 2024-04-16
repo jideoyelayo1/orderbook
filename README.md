@@ -7,12 +7,14 @@ This project implements an orderbook data structure in C++. An orderbook is a cr
 The project consists of several key components:
 
 - **Orderbook**: The main class representing the orderbook. It manages buy and sell orders and matches them based on price-time priority.
-  
+
 - **Order**: Represents an individual order with attributes such as order type, side (buy/sell), price, and quantity.
 
 - **Order Modify**: Handles modifications to existing orders, such as price or quantity adjustments.
 
 - **Trade**: Represents a trade executed between a buy and sell order.
+
+- **Google Tests**: The project includes tests implemented using Google Test framework to ensure correctness and reliability.
 
 ## Usage
 
@@ -47,7 +49,14 @@ The project supports various order types including:
 
 ## Dependencies
 
-The project relies on standard C++ libraries and does not have any external dependencies.
+The project relies on standard C++ libraries and includes Google Test framework for testing purposes.
+
+## Testing
+
+The project includes comprehensive unit tests implemented using Google Test framework to ensure correctness and reliability. To run the tests, you can run the following file:
+```
+test.cpp
+```
 
 ## Contributing
 
