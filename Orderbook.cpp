@@ -12,54 +12,83 @@ bool Orderbook::canMatch(Side side, Price price) const {
     const auto& [bestBid, _] = *_bids.begin(); // gets the price
     return price <= bestBid;
 }
-Trades Orderbook::MatchOrders() {
+Trades Orderbook::MatchOrders()
+{
     Trades trades;
+    trades.reserve(_orders.size());
 
-    trades.reserve(_orders.size()); // assuming an order matches every order in the ordebook
-    while (true) {
-        if (_bids.empty() || _asks.empty()) break;
+    while (true)
+    {
+        if (_bids.empty() || _asks.empty())
+            break;
+
         auto& [bidPrice, bids] = *_bids.begin();
         auto& [askPrice, asks] = *_asks.begin();
 
-        if (bidPrice < askPrice) break;
+        if (bidPrice < askPrice)
+            break;
 
-        while (bids.size() && asks.size()) {
-            auto& bid = bids.front();
-            auto& ask = asks.front();
+        while (!bids.empty() && !asks.empty())
+        {
+            auto bid = bids.front();
+            auto ask = asks.front();
 
-            Quantity qty = std::min(bid->getRemainingQty(), ask->getRemainingQty());
+            Quantity quantity = std::min(bid->getRemainingQty(), ask->getRemainingQty());
 
-            bid->Fill(qty);
-            ask->Fill(qty);
+            bid->Fill(quantity);
+            ask->Fill(quantity);
 
-            if (bid->isFilled()) {
+            if (bid->isFilled())
+            {
                 bids.pop_front();
                 _orders.erase(bid->getOrderId());
             }
 
+            if (ask->isFilled())
+            {
+                asks.pop_front();
+                _orders.erase(ask->getOrderId());
+            }
 
 
             trades.push_back(Trade{
-              TradeInfo{bid->getOrderId(), bid->getPrice(), qty},
-              TradeInfo{ask->getOrderId(), ask->getPrice(), qty}
+                TradeInfo{ bid->getOrderId(), bid->getPrice(), quantity },
+                TradeInfo{ ask->getOrderId(), ask->getPrice(), quantity }
                 });
-            onOrderMatched(bid->getPrice(), qty, bid->isFilled());
-            onOrderMatched(ask->getPrice(), qty, ask->isFilled());
-        }
-        if (bids.empty()) { _bids.erase(bidPrice); _data.erase(bidPrice); }
-        if (asks.empty()) { _asks.erase(askPrice); _data.erase(askPrice); }
 
+            onOrderMatched(bid->getPrice(), quantity, bid->isFilled());
+            onOrderMatched(ask->getPrice(), quantity, ask->isFilled());
+        }
+
+        if (bids.empty())
+        {
+            _bids.erase(bidPrice);
+            _data.erase(bidPrice);
+        }
+
+        if (asks.empty())
+        {
+            _asks.erase(askPrice);
+            _data.erase(askPrice);
+        }
     }
-    if (!_bids.empty()) {
+
+    if (!_bids.empty())
+    {
         auto& [_, bids] = *_bids.begin();
         auto& order = bids.front();
-        if (order->getOrderType() == OrderType::FillAndKill) CancelOrder(order->getOrderId());
+        if (order->getOrderType() == OrderType::FillAndKill)
+            CancelOrder(order->getOrderId());
     }
-    if (!_asks.empty()) {
+
+    if (!_asks.empty())
+    {
         auto& [_, asks] = *_asks.begin();
         auto& order = asks.front();
-        if (order->getOrderType() == OrderType::FillAndKill) CancelOrder(order->getOrderId());
+        if (order->getOrderType() == OrderType::FillAndKill)
+            CancelOrder(order->getOrderId());
     }
+
     return trades;
 }
 void Orderbook::CancelOrders(OrderIds orderIds) {
@@ -68,7 +97,7 @@ void Orderbook::CancelOrders(OrderIds orderIds) {
 }
 void Orderbook::CancelOrderInternal(OrderId orderId) { // You would have to take the mutex a lot of times wasting time (only taking the mutex one)
     if (!_orders.contains(orderId)) return;
-    const auto& [order, orderIter] = _orders.at(orderId);
+    const auto [order, orderIter] = _orders.at(orderId);
 
     if (order->getSide() == Side::Sell) {
         auto price = order->getPrice();
