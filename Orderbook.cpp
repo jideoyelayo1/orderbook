@@ -1,5 +1,7 @@
 #include "Orderbook.h"
 
+#include <mutex>
+
 bool Orderbook::canMatch(Side side, Price price) const {
     if (side == Side::Buy) {
         if (_asks.empty()) return false;
