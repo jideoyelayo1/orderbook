@@ -235,6 +235,7 @@ Trades Orderbook::addOrder(OrderPtr order) {
     }
 
     if (order->getOrderType() == OrderType::FillAndKill && !canMatch(order->getSide(), order->getPrice())) return { };
+    if (order->getOrderType() == OrderType::FillOrKill && !canFullyFill(order->getSide(), order->getPrice(), order->getInitialQty())) return { }; // if it can not fill all then ignore order
 
     OrderPtrs::iterator iter;
     if (order->getSide() == Side::Buy) {
