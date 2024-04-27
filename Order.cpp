@@ -8,7 +8,7 @@ Quantity Order::getInitialQty() const { return _initialQty; } // may not be used
 Quantity Order::getQty() const { return _quantity; }
 Quantity Order::getRemainingQty() const { return _remainingQty; }
 Quantity Order::getFilledQty() const { return _initialQty - _remainingQty; }
-bool Order::isFilled() const { return _remainingQty == 0; }
+bool Order::isFilled() const { return getRemainingQty() == 0; }
 void Order::Fill(Quantity qty) {
     if (qty > getRemainingQty()) {
         throw std::logic_error(std::format("Order ({}) cannot be filled for more than remaining qty ({})", getOrderId(), getRemainingQty()));

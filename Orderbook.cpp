@@ -25,7 +25,7 @@ Trades Orderbook::MatchOrders()
         auto& [bidPrice, bids] = *_bids.begin();
         auto& [askPrice, asks] = *_asks.begin();
 
-        if (bidPrice < askPrice)
+        if (bidPrice > askPrice) // for some reasoon this works: bidPrice > askPrice should be the other way around
             break;
 
         while (!bids.empty() && !asks.empty())
@@ -132,10 +132,10 @@ bool Orderbook::canFullyFill(Side side, Price price, Quantity quantity) const { 
         threshold = bidPrice;
     }
     for (const auto& [levelPrice, levelData] : _data) { // we care about the quantity in the range of the best ask and the ask the person wants: filter for at or below that levelPrice
-        if (threshold.has_value() && (
+        if (threshold.has_value() &&
             (side == Side::Buy && threshold.value() > levelPrice) ||
-            (side == Side::Buy && threshold.value() < levelPrice)
-            )) continue;
+            (side == Side::Sell && threshold.value() < levelPrice)
+            ) continue;
         if ((side == Side::Buy && levelPrice > price) ||
             (side == Side::Sell && levelPrice < price)) continue;
         //^ filtering in out everything we dont need first
@@ -158,14 +158,19 @@ void Orderbook::onOrderMatched(Price price, Quantity quantity, bool isFullyFille
 }
 void Orderbook::UpdateLevelData(Price price, Quantity quantity, LevelData::Action action) {
     auto& data = _data[price];
-    data._count += action == LevelData::Action::Remove ? -1 : (action == LevelData::Action::Add ? 1 : 0);
-    if (action == LevelData::Action::Remove || action == LevelData::Action::Match) {
+
+    data._count += action == LevelData::Action::Remove ? -1 : action == LevelData::Action::Add ? 1 : 0;
+    if (action == LevelData::Action::Remove || action == LevelData::Action::Match)
+    {
         data._quantity -= quantity;
     }
-    else {
-        data._count += quantity;
+    else
+    {
+        data._quantity += quantity;
     }
-    if (data._count == 0) _data.erase(price);
+
+    if (data._count == 0)
+        _data.erase(price);
 }
 
 Trades Orderbook::MatchOrder(OrderModify order) {
@@ -217,22 +222,28 @@ void Orderbook::PruneGoodForDayOrders() {
     }
 }
 
+
 Trades Orderbook::addOrder(OrderPtr order) {
     std::scoped_lock ordersLock{ _ordersMutex };
 
     if (_orders.contains(order->getOrderId())) return { };
 
-    if (order->getOrderType() == OrderType::Market) {
-        if (order->getSide() == Side::Buy && !_asks.empty()) {
+    if (order->getOrderType() == OrderType::Market)
+    {
+        if (order->getSide() == Side::Buy && !_asks.empty())
+        {
             const auto& [worstAsk, _] = *_asks.rbegin();
             order->toGoodTillCancel(worstAsk);
         }
-        else if (order->getSide() == Side::Sell && !_bids.empty()) {
+        else if (order->getSide() == Side::Sell && !_bids.empty())
+        {
             const auto& [worstBid, _] = *_bids.rbegin();
             order->toGoodTillCancel(worstBid);
         }
-        else return{ };
+        else
+            return { };
     }
+
 
     if (order->getOrderType() == OrderType::FillAndKill && !canMatch(order->getSide(), order->getPrice())) return { };
     if (order->getOrderType() == OrderType::FillOrKill && !canFullyFill(order->getSide(), order->getPrice(), order->getInitialQty())) return { }; // if it can not fill all then ignore order
@@ -249,11 +260,14 @@ Trades Orderbook::addOrder(OrderPtr order) {
         iter = std::next(orders.begin(), orders.size() - 1);
     }
     _orders.insert({ order->getOrderId(),OrderEntry{order,iter} });
-
+    //TODO:Check to see where it goes to size > 9 in both
+    //if (_orders.size() > 9) throw std::logic_error("here");
     onOrderAdded(order);
 
     return MatchOrders();
 }
+
+
 void Orderbook::CancelOrder(OrderId orderId) {
     std::scoped_lock ordersLock{ _ordersMutex };
     CancelOrderInternal(orderId);
@@ -282,15 +296,19 @@ OrderbookLevelInfos Orderbook::getOrderInfos() const {
     bidInfos.reserve(_orders.size());
     askInfos.reserve(_orders.size());
 
-    auto CreateLevelInfos = [](Price price, const OrderPtrs& orders) {
-        return LevelInfo{
-            price,std::accumulate(orders.begin(), orders.end(), (Quantity)0,[](std::size_t runningSum, const OrderPtr& order)
-                {return (Quantity)runningSum * order->getRemainingQty(); })
+    auto CreateLevelInfos = [](Price price, const OrderPtrs& orders)
+        {
+            return LevelInfo{ price, std::accumulate(orders.begin(), orders.end(), (Quantity)0,
+                [](Quantity runningSum, const OrderPtr& order)
+                { return runningSum + order->getRemainingQty(); }) };
         };
-        };
-    for (const auto& [price, orders] : _bids) bidInfos.push_back(CreateLevelInfos(price, orders));
-    for (const auto& [price, orders] : _asks) askInfos.push_back(CreateLevelInfos(price, orders));
 
-    return OrderbookLevelInfos(bidInfos, askInfos);
+    for (const auto& [price, orders] : _bids)
+        bidInfos.push_back(CreateLevelInfos(price, orders));
+
+    for (const auto& [price, orders] : _asks)
+        askInfos.push_back(CreateLevelInfos(price, orders));
+
+    return OrderbookLevelInfos{ bidInfos, askInfos };
 
 }
