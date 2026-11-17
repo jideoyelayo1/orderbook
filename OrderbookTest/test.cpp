@@ -10,6 +10,9 @@
 
 #include "../Order.h"
 #include "../Order.cpp"
+
+#include "../Trade.h"
+#include "../Trade.cpp"
 #pragma endregion
 
 
