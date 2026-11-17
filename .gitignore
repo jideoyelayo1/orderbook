@@ -1,4 +1,4 @@
 debug/
 x64/
 *.pch
-build/
+build*/
