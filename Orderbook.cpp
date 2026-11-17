@@ -205,8 +205,8 @@ void Orderbook::PruneGoodForDayOrders() {
 
         { // we dont want this thread to alter the state of out DS at the same time: Undefined behaviour
             std::unique_lock ordersLock{ _ordersMutex };
-            if (_shutdown.load(std::memory_order_acquire) // if orderbook is no longer in use run
-                || _shutdownConditionVariable.wait_for(ordersLock, till) == std::cv_status::no_timeout) // if signed a shutdown return
+            // predicate form: a spurious wake-up must not end the thread
+            if (_shutdownConditionVariable.wait_for(ordersLock, till, [this] { return _shutdown.load(std::memory_order_acquire); }))
                 return;
         }
 

@@ -64,7 +64,10 @@ public:
     Orderbook(Orderbook&&) = delete;
     void operator=(Orderbook&&) = delete;
     ~Orderbook() {
-        _shutdown.store(true, std::memory_order_release);
+        {   // set under the mutex so the flag cannot change between the pruner's check and its wait
+            std::scoped_lock ordersLock{ _ordersMutex };
+            _shutdown.store(true, std::memory_order_release);
+        }
         _shutdownConditionVariable.notify_one();
         _ordersPruneThread.join();
     }
