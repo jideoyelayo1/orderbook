@@ -31,8 +31,8 @@ private:
             Match, // A fully match: affects count and quantity, Partial match: order remains but we only impact quantity
         };
     };
-    std::map<Price, OrderPtrs, std::greater<Price>> _asks;
-    std::map<Price, OrderPtrs, std::less<Price>> _bids;
+    std::map<Price, OrderPtrs, std::less<Price>> _asks; // best (lowest) ask first
+    std::map<Price, OrderPtrs, std::greater<Price>> _bids; // best (highest) bid first
     std::unordered_map<OrderId, OrderEntry> _orders;
     std::unordered_map<Price, LevelData> _data;
     mutable std::mutex _ordersMutex;
