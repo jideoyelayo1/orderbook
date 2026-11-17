@@ -1,0 +1,142 @@
+# Test results at 23bfe96 (all four fixes)
+# Apple M1 Pro, macOS 27.0.1 (26A434), Apple clang version 21.0.0 (clang-2100.3.34.2), CMake 4.4.0, GoogleTest 1.14.0
+# Each block: the command, then how many times each test passed (from ctest's per-test lines, counted with
+#   grep -oE 'Test +#[0-9]+: [^ ]+ \.+ +[A-Za-z*]+' <log> | sort | uniq -c), then ctest's summary.
+
+## Release
+# command: ctest --test-dir build --repeat until-fail:20
+    20 Cancel.MiddleOfQueueKeepsOthersInOrder Passed
+    20 Cancel.RemovesOrderAndEmptyLevelOnly Passed
+    20 Cancel.UnknownOrAlreadyFilledIdIsANoOp Passed
+    20 Crossing.EqualPricesTrade Passed
+    20 Crossing.NonCrossingOrdersRestWithoutTrading Passed
+    20 FillAndKill.PartialFillThenRemainderIsCancelled Passed
+    20 FillAndKill.RejectedWhenNothingCrosses Passed
+    20 FillOrKill.FillsAcrossLevelsWhenEnoughQuantity Passed
+    20 FillOrKill.IgnoresQuantityBeyondItsLimit Passed
+    20 FillOrKill.RejectedWhenQuantityShortAndBookUntouched Passed
+    20 FillOrKill.SeesQuantityRestingAfterSamePriceCross Passed
+    20 FillOrKill.SellSideUsesBidsAtOrAboveLimit Passed
+    20 GoodForDay.RestsAndMatchesLikeGoodTillCancel Passed
+    20 GoodTillCancel.RemainderRestsAtItsLimit Passed
+    20 Lifecycle.DestroyingManyBooksDoesNotHang Passed
+    20 Market.BuySweepsAsksBestFirstAndDoesNotRest Passed
+    20 Market.RejectedWhenOppositeSideEmpty Passed
+    20 Market.RemainderRestsAtWorstOppositePrice Passed
+    20 Market.SellSweepsBidsBestFirst Passed
+    20 Modify.ChangesPriceAndQuantity Passed
+    20 Modify.LosesTimePriority Passed
+    20 Modify.NewPriceCanCrossAndTrade Passed
+    20 Modify.UnknownIdIsANoOp Passed
+    20 PricePriority.AggressorWalksLevelsBestToWorst Passed
+    20 PricePriority.BuyAggressorLiftsLowestAskFirst Passed
+    20 PricePriority.LevelsAreReportedBestFirst Passed
+    20 PricePriority.SellAggressorHitsHighestBidFirst Passed
+    20 RandomFlow.ContractHoldsAfterEveryOperation Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Cancel_Success.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestAskFirst.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestBidFirst.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillAndKill.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Hit.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Miss.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_GoodTillCancel.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_Market.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_NoCross.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Modify_Side.txt" Passed
+    20 TimePriority.FirstInFirstOutWithinALevel Passed
+100% tests passed out of 39
+Total Test time (real) =   7.66 sec
+
+## AddressSanitizer + UndefinedBehaviorSanitizer, Debug (-fsanitize=address,undefined -fno-omit-frame-pointer)
+# command: UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 ctest --test-dir build-asan --repeat until-fail:20 --output-on-failure
+    20 Cancel.MiddleOfQueueKeepsOthersInOrder Passed
+    20 Cancel.RemovesOrderAndEmptyLevelOnly Passed
+    20 Cancel.UnknownOrAlreadyFilledIdIsANoOp Passed
+    20 Crossing.EqualPricesTrade Passed
+    20 Crossing.NonCrossingOrdersRestWithoutTrading Passed
+    20 FillAndKill.PartialFillThenRemainderIsCancelled Passed
+    20 FillAndKill.RejectedWhenNothingCrosses Passed
+    20 FillOrKill.FillsAcrossLevelsWhenEnoughQuantity Passed
+    20 FillOrKill.IgnoresQuantityBeyondItsLimit Passed
+    20 FillOrKill.RejectedWhenQuantityShortAndBookUntouched Passed
+    20 FillOrKill.SeesQuantityRestingAfterSamePriceCross Passed
+    20 FillOrKill.SellSideUsesBidsAtOrAboveLimit Passed
+    20 GoodForDay.RestsAndMatchesLikeGoodTillCancel Passed
+    20 GoodTillCancel.RemainderRestsAtItsLimit Passed
+    20 Lifecycle.DestroyingManyBooksDoesNotHang Passed
+    20 Market.BuySweepsAsksBestFirstAndDoesNotRest Passed
+    20 Market.RejectedWhenOppositeSideEmpty Passed
+    20 Market.RemainderRestsAtWorstOppositePrice Passed
+    20 Market.SellSweepsBidsBestFirst Passed
+    20 Modify.ChangesPriceAndQuantity Passed
+    20 Modify.LosesTimePriority Passed
+    20 Modify.NewPriceCanCrossAndTrade Passed
+    20 Modify.UnknownIdIsANoOp Passed
+    20 PricePriority.AggressorWalksLevelsBestToWorst Passed
+    20 PricePriority.BuyAggressorLiftsLowestAskFirst Passed
+    20 PricePriority.LevelsAreReportedBestFirst Passed
+    20 PricePriority.SellAggressorHitsHighestBidFirst Passed
+    20 RandomFlow.ContractHoldsAfterEveryOperation Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Cancel_Success.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestAskFirst.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestBidFirst.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillAndKill.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Hit.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Miss.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_GoodTillCancel.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_Market.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_NoCross.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Modify_Side.txt" Passed
+    20 TimePriority.FirstInFirstOutWithinALevel Passed
+100% tests passed out of 39
+Total Test time (real) =  37.07 sec
+
+## ThreadSanitizer, Debug (-fsanitize=thread -fno-omit-frame-pointer)
+# command: TSAN_OPTIONS=halt_on_error=1 ctest --test-dir build-tsan --repeat until-fail:20 --output-on-failure
+    20 Cancel.MiddleOfQueueKeepsOthersInOrder Passed
+    20 Cancel.RemovesOrderAndEmptyLevelOnly Passed
+    20 Cancel.UnknownOrAlreadyFilledIdIsANoOp Passed
+    20 Crossing.EqualPricesTrade Passed
+    20 Crossing.NonCrossingOrdersRestWithoutTrading Passed
+    20 FillAndKill.PartialFillThenRemainderIsCancelled Passed
+    20 FillAndKill.RejectedWhenNothingCrosses Passed
+    20 FillOrKill.FillsAcrossLevelsWhenEnoughQuantity Passed
+    20 FillOrKill.IgnoresQuantityBeyondItsLimit Passed
+    20 FillOrKill.RejectedWhenQuantityShortAndBookUntouched Passed
+    20 FillOrKill.SeesQuantityRestingAfterSamePriceCross Passed
+    20 FillOrKill.SellSideUsesBidsAtOrAboveLimit Passed
+    20 GoodForDay.RestsAndMatchesLikeGoodTillCancel Passed
+    20 GoodTillCancel.RemainderRestsAtItsLimit Passed
+    20 Lifecycle.DestroyingManyBooksDoesNotHang Passed
+    20 Market.BuySweepsAsksBestFirstAndDoesNotRest Passed
+    20 Market.RejectedWhenOppositeSideEmpty Passed
+    20 Market.RemainderRestsAtWorstOppositePrice Passed
+    20 Market.SellSweepsBidsBestFirst Passed
+    20 Modify.ChangesPriceAndQuantity Passed
+    20 Modify.LosesTimePriority Passed
+    20 Modify.NewPriceCanCrossAndTrade Passed
+    20 Modify.UnknownIdIsANoOp Passed
+    20 PricePriority.AggressorWalksLevelsBestToWorst Passed
+    20 PricePriority.BuyAggressorLiftsLowestAskFirst Passed
+    20 PricePriority.LevelsAreReportedBestFirst Passed
+    20 PricePriority.SellAggressorHitsHighestBidFirst Passed
+    20 RandomFlow.ContractHoldsAfterEveryOperation Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Cancel_Success.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestAskFirst.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestBidFirst.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillAndKill.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Hit.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Miss.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_GoodTillCancel.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_Market.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_NoCross.txt" Passed
+    20 Tests/OrderbookTestsFixture.OrderbookTestSuite/"Modify_Side.txt" Passed
+    20 TimePriority.FirstInFirstOutWithinALevel Passed
+100% tests passed out of 39
+Total Test time (real) =  86.53 sec
+
+## One process, all 39 tests, 20 shuffled iterations (catches interactions that ctest's one-test-per-process runs hide)
+# command (from OrderbookTest/): UBSAN_OPTIONS=halt_on_error=1 TSAN_OPTIONS=halt_on_error=1 ../<build>/OrderbookTests --gtest_repeat=20 --gtest_shuffle --gtest_random_seed=1
+    build: 20 of 20 iterations passed all 39; 0 sanitizer reports
+    build-asan: 20 of 20 iterations passed all 39; 0 sanitizer reports
+    build-tsan: 20 of 20 iterations passed all 39; 0 sanitizer reports

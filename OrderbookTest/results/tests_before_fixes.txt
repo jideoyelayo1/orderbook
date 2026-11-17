@@ -1,0 +1,113 @@
+# ctest at e7ef197 (tests added, no fixes); Release build
+# Apple M1 Pro, macOS 27.0.1 (26A434), Apple clang version 21.0.0 (clang-2100.3.34.2), CMake 4.4.0, GoogleTest 1.14.0
+# command: cmake -S . -B build && cmake --build build && ctest --test-dir build --output-on-failure
+Test project <repo>/build
+      Start  1: PricePriority.SellAggressorHitsHighestBidFirst
+ 1/39 Test  #1: PricePriority.SellAggressorHitsHighestBidFirst ...............................   Passed    0.00 sec
+      Start  2: PricePriority.BuyAggressorLiftsLowestAskFirst
+ 2/39 Test  #2: PricePriority.BuyAggressorLiftsLowestAskFirst ................................   Passed    0.00 sec
+      Start  3: PricePriority.AggressorWalksLevelsBestToWorst
+ 3/39 Test  #3: PricePriority.AggressorWalksLevelsBestToWorst ................................   Passed    0.00 sec
+      Start  4: PricePriority.LevelsAreReportedBestFirst
+ 4/39 Test  #4: PricePriority.LevelsAreReportedBestFirst .....................................   Passed    0.00 sec
+      Start  5: TimePriority.FirstInFirstOutWithinALevel
+ 5/39 Test  #5: TimePriority.FirstInFirstOutWithinALevel .....................................   Passed    0.00 sec
+      Start  6: Crossing.NonCrossingOrdersRestWithoutTrading
+ 6/39 Test  #6: Crossing.NonCrossingOrdersRestWithoutTrading .................................   Passed    0.00 sec
+      Start  7: Crossing.EqualPricesTrade
+ 7/39 Test  #7: Crossing.EqualPricesTrade ....................................................   Passed    0.00 sec
+      Start  8: GoodTillCancel.RemainderRestsAtItsLimit
+ 8/39 Test  #8: GoodTillCancel.RemainderRestsAtItsLimit ......................................   Passed    0.00 sec
+      Start  9: FillAndKill.PartialFillThenRemainderIsCancelled
+ 9/39 Test  #9: FillAndKill.PartialFillThenRemainderIsCancelled ..............................***Timeout  20.04 sec
+Running main() from <repo>/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = FillAndKill.PartialFillThenRemainderIsCancelled
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from FillAndKill
+[ RUN      ] FillAndKill.PartialFillThenRemainderIsCancelled
+
+      Start 10: FillAndKill.RejectedWhenNothingCrosses
+10/39 Test #10: FillAndKill.RejectedWhenNothingCrosses .......................................   Passed    0.00 sec
+      Start 11: FillOrKill.FillsAcrossLevelsWhenEnoughQuantity
+11/39 Test #11: FillOrKill.FillsAcrossLevelsWhenEnoughQuantity ...............................   Passed    0.00 sec
+      Start 12: FillOrKill.RejectedWhenQuantityShortAndBookUntouched
+12/39 Test #12: FillOrKill.RejectedWhenQuantityShortAndBookUntouched .........................   Passed    0.00 sec
+      Start 13: FillOrKill.IgnoresQuantityBeyondItsLimit
+13/39 Test #13: FillOrKill.IgnoresQuantityBeyondItsLimit .....................................   Passed    0.00 sec
+      Start 14: FillOrKill.SellSideUsesBidsAtOrAboveLimit
+14/39 Test #14: FillOrKill.SellSideUsesBidsAtOrAboveLimit ....................................   Passed    0.00 sec
+      Start 15: FillOrKill.SeesQuantityRestingAfterSamePriceCross
+15/39 Test #15: FillOrKill.SeesQuantityRestingAfterSamePriceCross ............................   Passed    0.00 sec
+      Start 16: Market.BuySweepsAsksBestFirstAndDoesNotRest
+16/39 Test #16: Market.BuySweepsAsksBestFirstAndDoesNotRest ..................................   Passed    0.00 sec
+      Start 17: Market.SellSweepsBidsBestFirst
+17/39 Test #17: Market.SellSweepsBidsBestFirst ...............................................   Passed    0.00 sec
+      Start 18: Market.RejectedWhenOppositeSideEmpty
+18/39 Test #18: Market.RejectedWhenOppositeSideEmpty .........................................   Passed    0.00 sec
+      Start 19: Market.RemainderRestsAtWorstOppositePrice
+19/39 Test #19: Market.RemainderRestsAtWorstOppositePrice ....................................   Passed    0.00 sec
+      Start 20: GoodForDay.RestsAndMatchesLikeGoodTillCancel
+20/39 Test #20: GoodForDay.RestsAndMatchesLikeGoodTillCancel .................................   Passed    0.00 sec
+      Start 21: Cancel.RemovesOrderAndEmptyLevelOnly
+21/39 Test #21: Cancel.RemovesOrderAndEmptyLevelOnly .........................................   Passed    0.00 sec
+      Start 22: Cancel.MiddleOfQueueKeepsOthersInOrder
+22/39 Test #22: Cancel.MiddleOfQueueKeepsOthersInOrder .......................................   Passed    0.00 sec
+      Start 23: Cancel.UnknownOrAlreadyFilledIdIsANoOp
+23/39 Test #23: Cancel.UnknownOrAlreadyFilledIdIsANoOp .......................................   Passed    0.00 sec
+      Start 24: Modify.LosesTimePriority
+24/39 Test #24: Modify.LosesTimePriority .....................................................   Passed    0.00 sec
+      Start 25: Modify.NewPriceCanCrossAndTrade
+25/39 Test #25: Modify.NewPriceCanCrossAndTrade ..............................................   Passed    0.00 sec
+      Start 26: Modify.ChangesPriceAndQuantity
+26/39 Test #26: Modify.ChangesPriceAndQuantity ...............................................   Passed    0.00 sec
+      Start 27: Modify.UnknownIdIsANoOp
+27/39 Test #27: Modify.UnknownIdIsANoOp ......................................................   Passed    0.00 sec
+      Start 28: RandomFlow.ContractHoldsAfterEveryOperation
+28/39 Test #28: RandomFlow.ContractHoldsAfterEveryOperation ..................................***Timeout  20.03 sec
+Running main() from <repo>/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = RandomFlow.ContractHoldsAfterEveryOperation
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RandomFlow
+[ RUN      ] RandomFlow.ContractHoldsAfterEveryOperation
+
+      Start 29: Lifecycle.DestroyingManyBooksDoesNotHang
+29/39 Test #29: Lifecycle.DestroyingManyBooksDoesNotHang .....................................***Timeout  20.05 sec
+Running main() from <repo>/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = Lifecycle.DestroyingManyBooksDoesNotHang
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from Lifecycle
+[ RUN      ] Lifecycle.DestroyingManyBooksDoesNotHang
+
+      Start 30: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_GoodTillCancel.txt"
+30/39 Test #30: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_GoodTillCancel.txt" ....   Passed    0.01 sec
+      Start 31: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillAndKill.txt"
+31/39 Test #31: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillAndKill.txt" .......   Passed    0.00 sec
+      Start 32: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Hit.txt"
+32/39 Test #32: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Hit.txt" ....   Passed    0.00 sec
+      Start 33: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Miss.txt"
+33/39 Test #33: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_FillOrKill_Miss.txt" ...   Passed    0.00 sec
+      Start 34: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Cancel_Success.txt"
+34/39 Test #34: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Cancel_Success.txt" ..........   Passed    0.00 sec
+      Start 35: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Modify_Side.txt"
+35/39 Test #35: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Modify_Side.txt" .............   Passed    0.00 sec
+      Start 36: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_Market.txt"
+36/39 Test #36: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_Market.txt" ............   Passed    0.00 sec
+      Start 37: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestBidFirst.txt"
+37/39 Test #37: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestBidFirst.txt" ......   Passed    0.00 sec
+      Start 38: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestAskFirst.txt"
+38/39 Test #38: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_BestAskFirst.txt" ......   Passed    0.00 sec
+      Start 39: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_NoCross.txt"
+39/39 Test #39: Tests/OrderbookTestsFixture.OrderbookTestSuite/"Match_NoCross.txt" ...........   Passed    0.00 sec
+
+92% tests passed, 3 tests failed out of 39
+
+Total Test time (real) =  60.25 sec
+
+The following tests FAILED:
+	  9 - FillAndKill.PartialFillThenRemainderIsCancelled (Timeout)
+	 28 - RandomFlow.ContractHoldsAfterEveryOperation (Timeout)
+	 29 - Lifecycle.DestroyingManyBooksDoesNotHang (Timeout)
+Errors while running CTest

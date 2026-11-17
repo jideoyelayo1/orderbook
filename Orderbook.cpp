@@ -60,17 +60,12 @@ Trades Orderbook::MatchOrders()
             onOrderMatched(ask->getPrice(), quantity, ask->isFilled());
         }
 
+        // UpdateLevelData already drops a price's level data when its last order goes
         if (bids.empty())
-        {
             _bids.erase(bidPrice);
-            _data.erase(bidPrice);
-        }
 
         if (asks.empty())
-        {
             _asks.erase(askPrice);
-            _data.erase(askPrice);
-        }
     }
 
     if (!_bids.empty())
@@ -78,7 +73,7 @@ Trades Orderbook::MatchOrders()
         auto& [_, bids] = *_bids.begin();
         auto& order = bids.front();
         if (order->getOrderType() == OrderType::FillAndKill)
-            CancelOrder(order->getOrderId());
+            CancelOrderInternal(order->getOrderId()); // addOrder already holds _ordersMutex
     }
 
     if (!_asks.empty())
@@ -86,7 +81,7 @@ Trades Orderbook::MatchOrders()
         auto& [_, asks] = *_asks.begin();
         auto& order = asks.front();
         if (order->getOrderType() == OrderType::FillAndKill)
-            CancelOrder(order->getOrderId());
+            CancelOrderInternal(order->getOrderId()); // addOrder already holds _ordersMutex
     }
 
     return trades;
@@ -188,7 +183,11 @@ void Orderbook::PruneGoodForDayOrders() {
         const auto now = system_clock::now();
         const auto now_c = system_clock::to_time_t(now);
         std::tm now_parts;
+#ifdef _WIN32
         localtime_s(&now_parts, &now_c);
+#else
+        localtime_r(&now_c, &now_parts);
+#endif
 
         if (now_parts.tm_hour >= end.count()) now_parts.tm_mday++;
 
@@ -201,8 +200,8 @@ void Orderbook::PruneGoodForDayOrders() {
 
         { // we dont want this thread to alter the state of out DS at the same time: Undefined behaviour
             std::unique_lock ordersLock{ _ordersMutex };
-            if (_shutdown.load(std::memory_order_acquire) // if orderbook is no longer in use run
-                || _shutdownConditionVariable.wait_for(ordersLock, till) == std::cv_status::no_timeout) // if signed a shutdown return
+            // predicate form: a spurious wake-up must not end the thread
+            if (_shutdownConditionVariable.wait_for(ordersLock, till, [this] { return _shutdown.load(std::memory_order_acquire); }))
                 return;
         }
 
