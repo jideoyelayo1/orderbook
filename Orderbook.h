@@ -38,9 +38,9 @@ private:
     std::unordered_map<OrderId, OrderEntry> _orders;
     std::unordered_map<Price, LevelData> _data;
     mutable std::mutex _ordersMutex;
-    std::thread _ordersPruneThread;
     std::condition_variable _shutdownConditionVariable;
     std::atomic<bool> _shutdown{ false };
+    std::thread _ordersPruneThread; // declared last: the thread it starts uses every member above
 
     bool canMatch(Side side, Price price) const;
     Trades MatchOrders();
